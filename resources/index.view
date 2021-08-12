@@ -1,0 +1,96 @@
+<svg>
+  <rect id="background" />
+  
+<!-- <rect class="debug-fill" /> -->
+<!-- <rect class="divider divider-top" /> -->
+
+  
+  <section class="horizontal-pad">
+
+    <section id="date-section">
+      <text id="date">MON JAN 01</text>
+      <text id="time">13:37</text>
+    </section>
+
+    <section id="hrm-section">
+      <use id="hrm-icon" class="" href="#heart-beat" />
+      <text id="hrm-text" class="" />
+    </section>
+
+<!--     <use id="refresh-button" href="#icon-button" class="small-button plus-button" /> -->
+    <section id="refresh-section">
+      <rect id="refresh-rect" pointer-events="visible" />
+      <text id="refresh-text" pointer-events="visible">Refresh</text>
+    </section>
+    
+
+
+    <section id="data">      
+      <section id="data-row1" class="data-row">
+        <text id="ticker-name1" class="ticker-name" />
+        <text id="ticker-price1" class="ticker-price" />
+        <text id="ticker-change1" class="ticker-change" />
+      </section>
+      <section id="data-row2" class="data-row">
+        <text id="ticker-name2" class="ticker-name" />
+        <text id="ticker-price2" class="ticker-price" />
+        <text id="ticker-change2" class="ticker-change" />
+      </section>
+      <section id="data-row3" class="data-row">
+        <text id="ticker-name3" class="ticker-name" />
+        <text id="ticker-price3" class="ticker-price" />
+        <text id="ticker-change3" class="ticker-change" />
+      </section>
+      <section id="data-row4" class="data-row">
+        <text id="ticker-name4" class="ticker-name" />
+        <text id="ticker-price4" class="ticker-price" />
+        <text id="ticker-change4" class="ticker-change" />
+      </section>
+      <section id="data-row5" class="data-row">
+        <text id="ticker-name5" class="ticker-name" />
+        <text id="ticker-price5" class="ticker-price" />
+        <text id="ticker-change5" class="ticker-change" />
+      </section>
+      <section id="data-row6" class="data-row">
+        <text id="ticker-name6" class="ticker-name" />
+        <text id="ticker-price6" class="ticker-price" />
+        <text id="ticker-change6" class="ticker-change" />
+      </section>
+      
+    </section>
+
+<!--     <use id="refreshButton" href="#icon-button" class="medium-button application-fill plus-button" /> -->
+
+  </section>
+  
+      <text id="last-update">Last updated one minute ago</text>
+
+  
+<!--   <rect class="divider divider-btm" /> -->
+<!--   <svg class="stats">
+    <use id="iconHRM" href="#heart-beat" />
+    <text id="txtHRM" class="stat-left" />
+    <use id="stats-cycle" href="#cycleview"> -->
+<!--       <use href="#cycleview-item" class="cycle-item">
+        <image href="images/steps.png" class="image" />
+        <text class="stat-right" />
+      </use>
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/calories.png" class="image" />
+        <text class="stat-right" />
+      </use> -->
+<!--       <use href="#cycleview-item" class="cycle-item">
+        <image href="images/distance.png" class="image" />
+        <text class="stat-right" />
+      </use> -->
+<!--       <use href="#cycleview-item" class="cycle-item">
+        <image href="images/heart_open.png" class="image" />
+        <text class="stat-right" />
+      </use>
+      <use href="#cycleview-item" class="cycle-item">
+        <image href="images/heart_solid.png" class="image" />
+        <text class="stat-right" />
+      </use> -->
+<!--     </use>
+  </svg> -->
+</svg>

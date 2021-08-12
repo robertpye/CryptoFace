@@ -1,0 +1,29 @@
+{
+  "devDependencies": {
+    "@fitbit/sdk": "~6.0.0"
+  },
+  "fitbit": {
+    "appUUID": "f95cc140-67ba-4457-8ee1-ae5ecdaff49a",
+    "appType": "clockface",
+    "appDisplayName": "CryptoFace",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "",
+    "requestedPermissions": [
+      "access_heart_rate",
+      "access_sleep",
+      "access_user_profile",
+      "access_internet",
+      "run_background"
+    ],
+    "buildTargets": [
+      "atlas",
+      "vulcan"
+    ],
+    "i18n": {
+      "en-US": {
+        "name": "CryptoFace"
+      }
+    },
+    "defaultLanguage": "en-US"
+  }
+}
