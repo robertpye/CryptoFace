@@ -1,13 +1,13 @@
-import document from "document"
-import { preferences } from "user-settings"
-import * as util from "../common/utils"
+import document from 'document'
+import { preferences } from 'user-settings'
+import * as util from '../common/utils'
 import { sendValue } from './message'
 
 // import * as simpleActivity from "./activity"
-import * as clock from "./clock"
-import * as hrm from "./hrm"
-import * as settings from "./device-settings"
-import * as tickers from "./tickers"
+import * as clock from './clock'
+import * as hrm from './hrm'
+import * as settings from './device-settings'
+import * as tickers from './tickers'
 
 
 // Update the <text> element every tick with the current time
@@ -157,7 +157,7 @@ function tickerCallback(data) {
 tickers.init(tickerCallback)
 
 function onRefreshClick(evt) {
-  console.log("refresh clicked")
+  console.log('refresh clicked')
   sendValue('refresh', '')
 }
 

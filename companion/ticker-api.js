@@ -1,4 +1,7 @@
 import { round } from '../common/utils'
+import log from './log'
+
+let lastFetch = 0
 
 export function fetchTickers(tickers) {
   if (!tickers) {
@@ -10,7 +13,7 @@ export function fetchTickers(tickers) {
     .then(response => response.json())
     .then(json => {
       if (json.quoteResponse.error) {
-        console.error(`yfinance error ${json.quoteResponse.error}`)
+        log.debug(`yfinance error ${json.quoteResponse.error}`) // this could be an error due to user input for tickers so log as debug. This isn't an app error
         return null
       }
       const result = {}
@@ -30,7 +33,7 @@ export function fetchTickers(tickers) {
       return tickerValues
     })
     .catch(e => {
-      console.log(e)
+      log.error('exception caught', e)
       // const result = {}
       // tickers.forEach(ticker => {
       //   result[ticker] = 'error'

@@ -2,7 +2,7 @@
 This file is common messaging functions specific to app.
 */
 
-import * as messaging from "messaging"
+import * as messaging from 'messaging'
 
 export function sendValue(key, value) {
   if (messaging.peerSocket.readyState === 0) {
@@ -13,6 +13,6 @@ export function sendValue(key, value) {
       value,
     })
   } else {
-    console.log("No peerSocket connection")
+    console.log('No peerSocket connection')
   }
 }
