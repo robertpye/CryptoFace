@@ -1,3 +1,4 @@
+import ga from 'fitbit-ga4/companion'
 import * as settings from './settings'
 import { settingsStorage } from 'settings'
 import { fetchTickers } from './ticker-api'
@@ -9,11 +10,16 @@ import log from './log'
 import { timestamp } from '../common/utils'
 import { me as companion } from 'companion'
 import { device, app } from 'peer'
-
+import { GA4_MEASUREMENT_ID, GA4_MEASUREMENT_API_SECRET } from '../resources/config'
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
 let lastTickerFetch = 0
+
 getUserId() // get or generate userId as first thing we do.
+ga.configure({
+  measurementId: GA4_MEASUREMENT_ID,
+  apiSecret: GA4_MEASUREMENT_API_SECRET,
+})
 
 function getDeviceInfo() {
   return {
@@ -65,9 +71,21 @@ function fetchAllTickers() {
   })
 }
 
-settings.init(() => {
+settings.init((evt) => {
   // fetch tickers if a setting changes
   log.debug('Settings changed')
+
+  const tickerMatch = evt.key.match(/^setting-ticker([0-9])$/)
+  if (tickerMatch) {
+    const ticker = settings.readValue(evt.key) || 'DEFAULT'
+    ga.send({
+      name: 'ticker_changed',
+      params: {
+        position: tickerMatch[1],
+        ticker,
+      }
+    })
+  }
   fetchAllTickers()
 })
 

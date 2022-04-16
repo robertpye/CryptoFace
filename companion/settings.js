@@ -12,7 +12,7 @@ export function init(callback) {
     // }
     
     if (evt.oldValue !== evt.newValue) {
-      callback()
+      callback(evt)
     }
   })
 }

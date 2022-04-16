@@ -1,4 +1,5 @@
 import document from 'document'
+import ga from 'fitbit-ga4/app'
 import { preferences } from 'user-settings'
 import * as util from '../common/utils'
 import { sendValue } from './message'
@@ -9,6 +10,8 @@ import * as hrm from './hrm'
 import * as settings from './device-settings'
 import * as tickers from './tickers'
 
+ga.setDebug(false)
+ga.sendLoadAndDisplayOnEvents(true)
 
 // Update the <text> element every tick with the current time
 // clock.ontick = (evt) => {
@@ -159,6 +162,7 @@ tickers.init(tickerCallback)
 function onRefreshClick(evt) {
   console.log('refresh clicked')
   sendValue('refresh', '')
+  ga.send({ name: 'refresh_click' })
 }
 
 document.getElementById("refresh-section").addEventListener("click", onRefreshClick)
