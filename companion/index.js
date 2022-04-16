@@ -39,7 +39,7 @@ function readTickersFromStorage() {
   return [
     settings.readValue('setting-ticker1') || 'BTC-USD',
     settings.readValue('setting-ticker2') || 'ETH-USD',
-    settings.readValue('setting-ticker3') || 'LTC-USD',
+    settings.readValue('setting-ticker3') || 'AVAX-USD',
     settings.readValue('setting-ticker4') || 'XRP-USD',
     settings.readValue('setting-ticker5') || 'DIA',
     settings.readValue('setting-ticker6') || 'VTSAX',
