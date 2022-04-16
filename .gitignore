@@ -1,0 +1,5 @@
+SECRETS
+build/
+fitbit-ga4/
+node_modules/
+package-lock.json
