@@ -31,6 +31,6 @@
     "build": "fitbit-build"
   },
   "dependencies": {
-    "fitbit-ga4": "~1.0.0"
+    "fitbit-ga4": "~1.0.1"
   }
 }
