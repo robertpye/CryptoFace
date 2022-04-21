@@ -1,16 +1,7 @@
 import { settingsStorage } from 'settings'
-import { sendValue } from './message'
 
 export function init(callback) {
     settingsStorage.addEventListener('change', evt => {
-        // no need to send to app
-        // if (evt.oldValue !== evt.newValue) {
-        //   sendValue('settings', {
-        //     settingKey: evt.key,
-        //     value: JSON.parse(evt.newValue),
-        //   });
-        // }
-
         if (evt.oldValue !== evt.newValue) {
             callback(evt)
         }

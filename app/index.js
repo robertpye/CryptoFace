@@ -1,14 +1,16 @@
 import document from 'document'
 import ga from 'fitbit-ga4/app'
-import { preferences } from 'user-settings'
 import * as util from '../common/utils'
-import { sendValue } from './message'
+import {
+    requestRefresh,
+    FILE_REQUEST_REFRESH,
+    FILE_TICKER_DATA,
+} from '../common/file-messaging'
 
-// import * as simpleActivity from "./activity"
 import * as clock from './clock'
 import * as hrm from './hrm'
-import * as settings from './device-settings'
-import * as tickers from './tickers'
+import { inbox } from 'file-transfer'
+import * as fs from 'fs'
 
 ga.setDebug(false)
 ga.sendLoadAndDisplayOnEvents(true)
@@ -102,19 +104,26 @@ function hrmCallback(data) {
 
 hrm.init(hrmCallback)
 
-/* -------- SETTINGS -------- */
-function settingsCallback(data) {
+/* -------- TICKER DATA -------- */
+const processFiles = () => {
+    let file
+    while ((file = inbox.nextFile(FILE_TICKER_DATA))) {
+        const payload = fs.readFileSync(file, 'cbor')
+        console.log(`CryptoFace: File ${file} is being processed.`)
+        updateUIFromTickerData(payload)
+    }
 }
 
-settings.init(settingsCallback)
-
-/* -------- TICKER DATA -------- */
+// Process new files as they arrive
+inbox.addEventListener('newfile', processFiles)
+// Process files on startup
+processFiles()
 
 function applyTickerColor(node, changePercent) {
     node.style.fill = changePercent > 0 ? GREEN : RED
 }
 
-function tickerCallback(data) {
+function updateUIFromTickerData(data) {
     if (!data) {
         return
     }
@@ -162,11 +171,9 @@ function tickerCallback(data) {
     }
 }
 
-tickers.init(tickerCallback)
-
 function onRefreshClick(evt) {
     console.log('refresh clicked')
-    sendValue('refresh', '')
+    requestRefresh()
     ga.send({ name: 'refresh_click' })
 }
 

@@ -1,16 +1,20 @@
 import ga from 'fitbit-ga4/companion'
+import { FILE_EVENT } from 'fitbit-ga4/shared'
 import * as settings from './settings'
 import { settingsStorage } from 'settings'
 import { fetchTickers } from './ticker-api'
 import { getUserId } from './local-storage'
-import { sendValue, isPeerSocketOpen } from './message'
-import * as messaging from 'messaging'
 import { me } from 'companion'
 import log from './log'
 import { timestamp } from '../common/utils'
 import { me as companion } from 'companion'
 import { device, app } from 'peer'
 import { GA4_MEASUREMENT_ID, GA4_MEASUREMENT_API_SECRET } from '../resources/config'
+import { inbox } from 'file-transfer'
+import {
+    sendTickerData,
+    FILE_REQUEST_REFRESH,
+} from '../common/file-messaging'
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
 let lastTickerFetch = 0
@@ -19,6 +23,7 @@ getUserId() // get or generate userId as first thing we do.
 ga.configure({
     measurementId: GA4_MEASUREMENT_ID,
     apiSecret: GA4_MEASUREMENT_API_SECRET,
+    debug: false,
 })
 
 function getDeviceInfo() {
@@ -47,14 +52,9 @@ function readTickersFromStorage() {
 }
 
 function fetchAllTickers(trigger) {
-    if (!isPeerSocketOpen()) {
-        log.debug('Ignoring ticker fetch, peer socket closed')
-        return
-    }
-
     // ignore subsequent fetch attempts that are happening too quickly to save data. Arbitrary 5 seconds.
     const ts = timestamp()
-    if (lastTickerFetch > ts - 5000) {
+    if (lastTickerFetch > ts - 30000) {
         log.debug('Ignoring ticker fetch, too soon')
         return
     }
@@ -63,17 +63,14 @@ function fetchAllTickers(trigger) {
     log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
     fetchTickers(tickers).then(result => {
         if (result) {
-            const success = sendValue('tickers', result)
+            sendTickerData(result)
+            lastTickerFetch = timestamp()
             ga.send({
                 name: 'companion_fetch',
                 params: {
-                    success,
                     trigger,
                 },
             })
-            if (success) {
-                lastTickerFetch = timestamp()
-            }
         }
     })
 }
@@ -104,20 +101,6 @@ const initialFetch = setInterval(() => {
     clearInterval(initialFetch)
 }, 3000)
 
-
-messaging.peerSocket.addEventListener('message', function (evt) {
-    // refresh button clicked, fetch all tickers
-    log.debug(`Companion: received ${evt.data.key}  ${JSON.stringify(evt.data.value)}`)
-    if (evt.data.key === 'refresh') {
-        fetchAllTickers('refresh_button')
-    }
-})
-
-messaging.peerSocket.addEventListener('open', (evt) => {
-    log.debug('Peer socket opened')
-    fetchAllTickers('socket_open')
-})
-
 me.wakeInterval = DEFAULT_TICKER_FETCH_FREQUENCY
 
 me.onwakeinterval = evt => {
@@ -141,3 +124,19 @@ if (companion.launchReasons.peerAppLaunched) {
     log.debug('Started due to peer app launching')
     fetchAllTickers('launch_app')
 }
+
+const processFiles = async () => {
+    let file
+    while ((file = await inbox.pop())) {
+        if (file.name.startsWith(FILE_REQUEST_REFRESH)) {
+            await file.cbor()
+            console.log(`CryptoFace: File ${file.name} is being processed.`)
+            fetchAllTickers('refresh_button')
+        }
+    }
+}
+
+// Process new files as they arrive
+inbox.addEventListener('newfile', processFiles)
+// Process files on startup
+processFiles()
