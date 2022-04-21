@@ -17,127 +17,127 @@ let lastTickerFetch = 0
 
 getUserId() // get or generate userId as first thing we do.
 ga.configure({
-  measurementId: GA4_MEASUREMENT_ID,
-  apiSecret: GA4_MEASUREMENT_API_SECRET,
+    measurementId: GA4_MEASUREMENT_ID,
+    apiSecret: GA4_MEASUREMENT_API_SECRET,
 })
 
 function getDeviceInfo() {
-  return {
-    fbitVersion: companion.host.app.version,
-    osName: companion.host.os.name,
-    osVersion: companion.host.os.version,
-    modelId: device.modelId,
-    modelName: device.modelName,
-  }
+    return {
+        fbitVersion: companion.host.app.version,
+        osName: companion.host.os.name,
+        osVersion: companion.host.os.version,
+        modelId: device.modelId,
+        modelName: device.modelName,
+    }
 }
 
-companion.addEventListener("readystatechange", () => {
-  log.debug(`appReadyState changed to ${app.readyState}`)
+companion.addEventListener('readystatechange', () => {
+    log.debug(`appReadyState changed to ${app.readyState}`)
 })
 
 function readTickersFromStorage() {
-  return [
-    settings.readValue('setting-ticker1') || 'BTC-USD',
-    settings.readValue('setting-ticker2') || 'ETH-USD',
-    settings.readValue('setting-ticker3') || 'AVAX-USD',
-    settings.readValue('setting-ticker4') || 'XRP-USD',
-    settings.readValue('setting-ticker5') || 'DIA',
-    settings.readValue('setting-ticker6') || 'VTSAX',
-  ]
+    return [
+        settings.readValue('setting-ticker1') || 'BTC-USD',
+        settings.readValue('setting-ticker2') || 'ETH-USD',
+        settings.readValue('setting-ticker3') || 'AVAX-USD',
+        settings.readValue('setting-ticker4') || 'XRP-USD',
+        settings.readValue('setting-ticker5') || 'DIA',
+        settings.readValue('setting-ticker6') || 'VTSAX',
+    ]
 }
 
 function fetchAllTickers(trigger) {
-  if (!isPeerSocketOpen()) {
-    log.debug('Ignoring ticker fetch, peer socket closed')
-    return
-  }
-  
-  // ignore subsequent fetch attempts that are happening too quickly to save data. Arbitrary 5 seconds.
-  const ts = timestamp()
-  if (lastTickerFetch > ts - 5000) {
-    log.debug('Ignoring ticker fetch, too soon')
-    return
-  }
-  
-  const tickers = readTickersFromStorage()
-  log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
-  fetchTickers(tickers).then(result => {
-    if (result) {
-      const success = sendValue('tickers', result)
-      ga.send({
-        name: 'companion_fetch',
-        params: {
-          success,
-          trigger,
-        },
-      })
-      if (success) {
-        lastTickerFetch = timestamp()
-      }
+    if (!isPeerSocketOpen()) {
+        log.debug('Ignoring ticker fetch, peer socket closed')
+        return
     }
-  })
+
+    // ignore subsequent fetch attempts that are happening too quickly to save data. Arbitrary 5 seconds.
+    const ts = timestamp()
+    if (lastTickerFetch > ts - 5000) {
+        log.debug('Ignoring ticker fetch, too soon')
+        return
+    }
+
+    const tickers = readTickersFromStorage()
+    log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
+    fetchTickers(tickers).then(result => {
+        if (result) {
+            const success = sendValue('tickers', result)
+            ga.send({
+                name: 'companion_fetch',
+                params: {
+                    success,
+                    trigger,
+                },
+            })
+            if (success) {
+                lastTickerFetch = timestamp()
+            }
+        }
+    })
 }
 
 settings.init((evt) => {
-  // fetch tickers if a setting changes
-  log.debug('Settings changed')
+    // fetch tickers if a setting changes
+    log.debug('Settings changed')
 
-  const tickerMatch = evt.key.match(/^setting-ticker([0-9])$/)
-  if (tickerMatch) {
-    const ticker = settings.readValue(evt.key) || 'DEFAULT'
-    ga.send({
-      name: 'ticker_changed',
-      params: {
-        position: tickerMatch[1],
-        ticker,
-      }
-    })
-  }
-  fetchAllTickers('setting_change')
+    const tickerMatch = evt.key.match(/^setting-ticker([0-9])$/)
+    if (tickerMatch) {
+        const ticker = settings.readValue(evt.key) || 'DEFAULT'
+        ga.send({
+            name: 'ticker_changed',
+            params: {
+                position: tickerMatch[1],
+                ticker,
+            },
+        })
+    }
+    fetchAllTickers('setting_change')
 })
 
 const initialFetch = setInterval(() => {
-  log.info('Device Info', getDeviceInfo())
-  // initial fetching of tickers when watchface is loaded. 3 second delay to give time for app to peer connect to companion
-  log.debug('Initial fetch of tickers')
-  fetchAllTickers('init')
-  clearInterval(initialFetch)
+    log.info('Device Info', getDeviceInfo())
+    // initial fetching of tickers when watchface is loaded. 3 second delay to give time for app to peer connect to companion
+    log.debug('Initial fetch of tickers')
+    fetchAllTickers('init')
+    clearInterval(initialFetch)
 }, 3000)
 
 
-messaging.peerSocket.addEventListener('message', function(evt) {
-  // refresh button clicked, fetch all tickers
-  log.debug(`Companion: received ${evt.data.key}  ${JSON.stringify(evt.data.value)}`)
-  if (evt.data.key === 'refresh') {
-    fetchAllTickers('refresh_button')
-  }
+messaging.peerSocket.addEventListener('message', function (evt) {
+    // refresh button clicked, fetch all tickers
+    log.debug(`Companion: received ${evt.data.key}  ${JSON.stringify(evt.data.value)}`)
+    if (evt.data.key === 'refresh') {
+        fetchAllTickers('refresh_button')
+    }
 })
 
 messaging.peerSocket.addEventListener('open', (evt) => {
-  log.debug('Peer socket opened')
-  fetchAllTickers('socket_open')
+    log.debug('Peer socket opened')
+    fetchAllTickers('socket_open')
 })
 
 me.wakeInterval = DEFAULT_TICKER_FETCH_FREQUENCY
 
 me.onwakeinterval = evt => {
-  // periodic wake to fetch all tickers but companion is awake already
-  log.debug("Companion was already awake - onwakeinterval")
-  fetchAllTickers('wake_interval')
+    // periodic wake to fetch all tickers but companion is awake already
+    log.debug('Companion was already awake - onwakeinterval')
+    fetchAllTickers('wake_interval')
 }
 
-if (me.launchReasons.wokenUp) { 
-  // The companion started due to a periodic timer, fetch all tickers
-  log.debug("Started due to wake interval")
-  fetchAllTickers('launch_wake')
+if (me.launchReasons.wokenUp) {
+    // The companion started due to a periodic timer, fetch all tickers
+    log.debug('Started due to wake interval')
+    fetchAllTickers('launch_wake')
 }
 
-if (me.launchReasons.settingsChanged) { 
-  log.debug("Started due to setting change")
-  fetchAllTickers('launch_setting_change')
+if (me.launchReasons.settingsChanged) {
+    log.debug('Started due to setting change')
+    fetchAllTickers('launch_setting_change')
 }
 
 if (companion.launchReasons.peerAppLaunched) {
-  log.debug("Started due to peer app launching")
-  fetchAllTickers('launch_app')
+    log.debug('Started due to peer app launching')
+    fetchAllTickers('launch_app')
 }
