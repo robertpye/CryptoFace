@@ -46,7 +46,7 @@ function readTickersFromStorage() {
   ]
 }
 
-function fetchAllTickers() {
+function fetchAllTickers(trigger) {
   if (!isPeerSocketOpen()) {
     log.debug('Ignoring ticker fetch, peer socket closed')
     return
@@ -60,10 +60,17 @@ function fetchAllTickers() {
   }
   
   const tickers = readTickersFromStorage()
-  log.debug(`Fetching tickers: ${JSON.stringify(tickers)}`)
+  log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
   fetchTickers(tickers).then(result => {
     if (result) {
       const success = sendValue('tickers', result)
+      ga.send({
+        name: 'companion_fetch',
+        params: {
+          success,
+          trigger,
+        },
+      })
       if (success) {
         lastTickerFetch = timestamp()
       }
@@ -86,14 +93,14 @@ settings.init((evt) => {
       }
     })
   }
-  fetchAllTickers()
+  fetchAllTickers('setting_change')
 })
 
 const initialFetch = setInterval(() => {
   log.info('Device Info', getDeviceInfo())
   // initial fetching of tickers when watchface is loaded. 3 second delay to give time for app to peer connect to companion
   log.debug('Initial fetch of tickers')
-  fetchAllTickers()
+  fetchAllTickers('init')
   clearInterval(initialFetch)
 }, 3000)
 
@@ -102,13 +109,13 @@ messaging.peerSocket.addEventListener('message', function(evt) {
   // refresh button clicked, fetch all tickers
   log.debug(`Companion: received ${evt.data.key}  ${JSON.stringify(evt.data.value)}`)
   if (evt.data.key === 'refresh') {
-    fetchAllTickers()
+    fetchAllTickers('refresh_button')
   }
 })
 
 messaging.peerSocket.addEventListener('open', (evt) => {
   log.debug('Peer socket opened')
-  fetchAllTickers()
+  fetchAllTickers('socket_open')
 })
 
 me.wakeInterval = DEFAULT_TICKER_FETCH_FREQUENCY
@@ -116,21 +123,21 @@ me.wakeInterval = DEFAULT_TICKER_FETCH_FREQUENCY
 me.onwakeinterval = evt => {
   // periodic wake to fetch all tickers but companion is awake already
   log.debug("Companion was already awake - onwakeinterval")
-  fetchAllTickers()
+  fetchAllTickers('wake_interval')
 }
 
 if (me.launchReasons.wokenUp) { 
   // The companion started due to a periodic timer, fetch all tickers
   log.debug("Started due to wake interval")
-  fetchAllTickers()
+  fetchAllTickers('launch_wake')
 }
 
 if (me.launchReasons.settingsChanged) { 
   log.debug("Started due to setting change")
-  fetchAllTickers()
+  fetchAllTickers('launch_setting_change')
 }
 
 if (companion.launchReasons.peerAppLaunched) {
   log.debug("Started due to peer app launching")
-  fetchAllTickers()
+  fetchAllTickers('launch_app')
 }
