@@ -135,6 +135,11 @@ const processFiles = async () => {
             fetchAllTickers('refresh_button')
         } else {
             ga.processFileTransfer(file)
+
+            // Attempt to fetch ticker we get an GA event from app, most likely either display_on or load events
+            if (file.name.startsWith(FILE_EVENT)) {
+                fetchAllTickers('app_event')
+            }
         }
     }
 }
