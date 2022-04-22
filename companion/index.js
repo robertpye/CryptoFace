@@ -18,6 +18,7 @@ import {
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
 let lastTickerFetch = 0
+let tickerFetchInProgress = false
 
 getUserId() // get or generate userId as first thing we do.
 ga.configure({
@@ -60,9 +61,16 @@ function fetchAllTickers(trigger) {
         return
     }
 
+    if (tickerFetchInProgress) {
+        log.debug('Ignoring ticker fetch, already in progress')
+        return
+    }
+
     const tickers = readTickersFromStorage()
+    tickerFetchInProgress = true
     log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
     fetchTickers(tickers).then(result => {
+        tickerFetchInProgress = false
         if (result) {
             sendTickerData(result)
             lastTickerFetch = timestamp()
@@ -73,6 +81,8 @@ function fetchAllTickers(trigger) {
                 },
             })
         }
+    }).catch(() => {
+        tickerFetchInProgress = false
     })
 }
 
