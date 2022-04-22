@@ -23,6 +23,7 @@ getUserId() // get or generate userId as first thing we do.
 ga.configure({
     measurementId: GA4_MEASUREMENT_ID,
     apiSecret: GA4_MEASUREMENT_API_SECRET,
+    autoFileTransferProcessing: false,
     debug: false,
 })
 
@@ -132,6 +133,8 @@ const processFiles = async () => {
             await file.cbor()
             console.log(`CryptoFace: File ${file.name} is being processed.`)
             fetchAllTickers('refresh_button')
+        } else {
+            ga.processFileTransfer(file)
         }
     }
 }
