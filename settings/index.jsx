@@ -16,11 +16,11 @@ function mySettings(props) {
                 <TextInput
                     settingsKey="setting-ticker3"
                     label="Ticker #3"
-                    placeholder="LTC-USD"/>
+                    placeholder="AVAX-USD"/>
                 <TextInput
                     settingsKey="setting-ticker4"
                     label="Ticker #4"
-                    placeholder="XRP-USD"/>
+                    placeholder="NFLX"/>
                 <TextInput
                     settingsKey="setting-ticker5"
                     label="Ticker #5"
@@ -28,7 +28,7 @@ function mySettings(props) {
                 <TextInput
                     settingsKey="setting-ticker6"
                     label="Ticker #6"
-                    placeholder="VTSAX"/>
+                    placeholder="VOO"/>
             </Section>
         </Page>
     )
