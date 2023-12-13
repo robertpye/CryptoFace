@@ -123,6 +123,19 @@ function applyTickerColor(node, changePercent) {
     node.style.fill = changePercent > 0 ? GREEN : RED
 }
 
+function setPrice(element, price) {
+    element.text = price || 'error'
+}
+
+function setChangePercent(element, changePercent) {
+    if (typeof changePercent === 'number' ) {
+        element.text = `${changePercent}%`
+        applyTickerColor(element, changePercent)
+    } else {
+        element.text = ''
+    }
+}
+
 function updateUIFromTickerData(data) {
     if (!data) {
         return
@@ -135,39 +148,33 @@ function updateUIFromTickerData(data) {
 
     if (data[0]) {
         tickerName1.text = data[0].ticker
-        tickerPrice1.text = data[0].price
-        tickerChange1.text = `${data[0].changePercent}%`
-        applyTickerColor(tickerChange1, data[0].changePercent)
+        setPrice(tickerPrice1, data[0].price)
+        setChangePercent(tickerChange1, data[0].changePercent)
     }
     if (data[1]) {
         tickerName2.text = data[1].ticker
-        tickerPrice2.text = data[1].price
-        tickerChange2.text = `${data[1].changePercent}%`
-        applyTickerColor(tickerChange2, data[1].changePercent)
+        setPrice(tickerPrice2, data[1].price)
+        setChangePercent(tickerChange2, data[1].changePercent)
     }
     if (data[2]) {
         tickerName3.text = data[2].ticker
-        tickerPrice3.text = data[2].price
-        tickerChange3.text = `${data[2].changePercent}%`
-        applyTickerColor(tickerChange3, data[2].changePercent)
+        setPrice(tickerPrice3, data[2].price)
+        setChangePercent(tickerChange3, data[2].changePercent)
     }
     if (data[3]) {
         tickerName4.text = data[3].ticker
-        tickerPrice4.text = data[3].price
-        tickerChange4.text = `${data[3].changePercent}%`
-        applyTickerColor(tickerChange4, data[3].changePercent)
+        setPrice(tickerPrice4, data[3].price)
+        setChangePercent(tickerChange4, data[3].changePercent)
     }
     if (data[4]) {
         tickerName5.text = data[4].ticker
-        tickerPrice5.text = data[4].price
-        tickerChange5.text = `${data[4].changePercent}%`
-        applyTickerColor(tickerChange5, data[4].changePercent)
+        setPrice(tickerPrice5, data[4].price)
+        setChangePercent(tickerChange5, data[4].changePercent)
     }
     if (data[5]) {
         tickerName6.text = data[5].ticker
-        tickerPrice6.text = data[5].price
-        tickerChange6.text = `${data[5].changePercent}%`
-        applyTickerColor(tickerChange6, data[5].changePercent)
+        setPrice(tickerPrice6, data[5].price)
+        setChangePercent(tickerChange6, data[5].changePercent)
     }
 }
 
