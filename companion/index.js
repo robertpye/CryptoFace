@@ -56,7 +56,7 @@ function readTickersFromStorage() {
 function fetchAllTickers(trigger) {
     // ignore subsequent fetch attempts that are happening too quickly to save data. Arbitrary 5 seconds.
     const ts = timestamp()
-    if (lastTickerFetch > ts - 30000) {
+    if (trigger !== 'setting_change' && lastTickerFetch > ts - 30000) {
         log.debug('Ignoring ticker fetch, too soon')
         return
     }
