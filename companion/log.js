@@ -4,7 +4,12 @@ import { device, app } from 'peer'
 import { getUserId } from './local-storage'
 
 function log(level, msg, data) {
-    console[level](msg, data)
+
+    if (level !== 'debug') {
+        console[level](msg, data)
+    } else {
+        console.log(msg, data)
+    }
 
     // append useful debugging data
     data = data || {}
