@@ -19,7 +19,9 @@ export function getLastUpdateTimeString(lastUpdated, cur) {
     const diffMinutes = Math.floor((cur - lastUpdated) / 60000)
     if (diffMinutes <= 0) return `recently`
     if (diffMinutes == 1) return `1 minute ago`
-    return `${diffMinutes} minutes ago`
+    if (diffMinutes < 1440) return `${diffMinutes} minutes ago`
+    const diffDays = Math.floor(diffMinutes / 1440)
+    return `${diffDays} days ago`
 }
 
 export function timestamp() {
