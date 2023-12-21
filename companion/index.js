@@ -2,7 +2,7 @@ import ga from 'fitbit-ga4/companion'
 import { FILE_EVENT } from 'fitbit-ga4/shared'
 import * as settings from './settings'
 import { settingsStorage } from 'settings'
-import { fetchTickers } from './ticker-api'
+import { fetchFearAndGreedIndicesApi, fetchTickers } from './ticker-api'
 import { getUserId } from './local-storage'
 import { me } from 'companion'
 import log from './log'
@@ -12,13 +12,16 @@ import { device, app } from 'peer'
 import { GA4_MEASUREMENT_ID, GA4_MEASUREMENT_API_SECRET } from '../resources/config'
 import { inbox } from 'file-transfer'
 import {
-    sendTickerData,
+    sendDataToApp,
     FILE_REQUEST_REFRESH,
 } from '../common/file-messaging'
+import { SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKERS } from '../common/constants'
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
+let lastGFIndexFetch = 0
 let lastTickerFetch = 0
 let tickerFetchInProgress = false
+let gfIndexFetchInProgress = false
 
 getUserId() // get or generate userId as first thing we do.
 ga.configure({
@@ -42,37 +45,84 @@ companion.addEventListener('readystatechange', () => {
     log.debug(`appReadyState changed to ${app.readyState}`)
 })
 
-function readTickersFromStorage() {
-    return [
-        settings.readValue('setting-ticker1') || 'BTC-USD',
-        settings.readValue('setting-ticker2') || 'ETH-USD',
-        settings.readValue('setting-ticker3') || 'AVAX-USD',
-        settings.readValue('setting-ticker4') || 'NFLX',
-        settings.readValue('setting-ticker5') || 'DIA',
-        settings.readValue('setting-ticker6') || 'VOO',
-    ]
+function readSettings() {
+    const showRefreshButton = settings.readValue('setting-show-refresh')
+    return {
+        [SETTING_TICKERS]: [
+            settings.readValue('setting-ticker1') || 'BTC-USD',
+            settings.readValue('setting-ticker2') || 'ETH-USD',
+            settings.readValue('setting-ticker3') || 'AVAX-USD',
+            settings.readValue('setting-ticker4') || 'NFLX',
+            settings.readValue('setting-ticker5') || 'DIA',
+            settings.readValue('setting-ticker6') || 'VOO',
+        ],
+        [SETTING_SHOW_REFRESH_BUTTON]: showRefreshButton === true || showRefreshButton === 'true',
+    }
 }
 
-function fetchAllTickers(trigger) {
+
+function refreshData(trigger) {
+    const settings = readSettings()
+    const showRefreshButton = settings[SETTING_SHOW_REFRESH_BUTTON]
+    const tickers = settings[SETTING_TICKERS]
+
+    const tickersPromise = fetchAllTickers(trigger, tickers)
+        .then(result => {
+            console.log(`Finished ticker data fetch for trigger=${trigger}`)
+            return result
+        })
+        .catch(err => {
+            log.debug(err)
+        })
+
+    let greedFearPromise
+    if (showRefreshButton) {
+        greedFearPromise = Promise.resolve(null)
+    } else {
+        greedFearPromise = fetchFearAndGreedIndices(trigger)
+            .then(result => {
+                console.log(`Finished fear/greed data fetch for trigger=${trigger}`)
+                return result
+            })
+            .catch(err => {
+                log.debug(err)
+            })
+    }
+
+    Promise.all([ tickersPromise, greedFearPromise ])
+        .then(results => {
+            const [ tickerData, greedAndFearData ] = results
+            const allData = {
+                settings,
+            }
+            if (tickerData) {
+                allData.tickerData = tickerData
+            }
+            if (greedAndFearData) {
+                allData.greedAndFearData = greedAndFearData
+            }
+            if (allData.tickerData || allData.greedAndFearData) {
+                sendDataToApp(allData)
+            }
+        })
+}
+
+function fetchAllTickers(trigger, tickers) {
     // ignore subsequent fetch attempts that are happening too quickly to save data. Arbitrary 5 seconds.
     const ts = timestamp()
     if (trigger !== 'setting_change' && lastTickerFetch > ts - 30000) {
-        log.debug('Ignoring ticker fetch, too soon')
-        return
+        return Promise.reject('Ignoring ticker fetch, too soon')
     }
 
     if (tickerFetchInProgress) {
-        log.debug('Ignoring ticker fetch, already in progress')
-        return
+        return Promise.reject('Ignoring ticker fetch, already in progress')
     }
 
-    const tickers = readTickersFromStorage()
     tickerFetchInProgress = true
     log.debug(`Fetching tickers (${trigger}): ${JSON.stringify(tickers)}`)
-    fetchTickers(tickers).then(result => {
+    return fetchTickers(tickers).then(result => {
         tickerFetchInProgress = false
         if (result) {
-            sendTickerData(result)
             lastTickerFetch = timestamp()
             ga.send({
                 name: 'companion_fetch',
@@ -81,6 +131,36 @@ function fetchAllTickers(trigger) {
                 },
             })
         }
+        return result
+    }).catch(() => {
+        tickerFetchInProgress = false
+    })
+}
+
+function fetchFearAndGreedIndices(trigger) {
+    const ts = timestamp()
+    if (trigger !== 'setting_change' && lastGFIndexFetch > ts - 3600000) {
+        return Promise.reject('Ignoring fear/greed fetch, too soon')
+    }
+
+    if (gfIndexFetchInProgress) {
+        return Promise.reject('Ignoring fear/greed fetch, already in progress')
+    }
+
+    gfIndexFetchInProgress = true
+    log.debug(`Fetching greed/fear indices (${trigger})`)
+    return fetchFearAndGreedIndicesApi().then(result => {
+        gfIndexFetchInProgress = false
+        if (result) {
+            lastGFIndexFetch = timestamp()
+            ga.send({
+                name: 'companion_gfi_fetch',
+                params: {
+                    trigger,
+                },
+            })
+        }
+        return result
     }).catch(() => {
         tickerFetchInProgress = false
     })
@@ -101,14 +181,14 @@ settings.init((evt) => {
             },
         })
     }
-    fetchAllTickers('setting_change')
+    refreshData('setting_change')
 })
 
 const initialFetch = setInterval(() => {
     log.info('Device Info', getDeviceInfo())
     // initial fetching of tickers when watchface is loaded. 3 second delay to give time for app to peer connect to companion
     log.debug('Initial fetch of tickers')
-    fetchAllTickers('init')
+    refreshData('init')
     clearInterval(initialFetch)
 }, 3000)
 
@@ -117,23 +197,23 @@ me.wakeInterval = DEFAULT_TICKER_FETCH_FREQUENCY
 me.onwakeinterval = evt => {
     // periodic wake to fetch all tickers but companion is awake already
     log.debug('Companion was already awake - onwakeinterval')
-    fetchAllTickers('wake_interval')
+    refreshData('wake_interval')
 }
 
 if (me.launchReasons.wokenUp) {
     // The companion started due to a periodic timer, fetch all tickers
     log.debug('Started due to wake interval')
-    fetchAllTickers('launch_wake')
+    refreshData('launch_wake')
 }
 
 if (me.launchReasons.settingsChanged) {
     log.debug('Started due to setting change')
-    fetchAllTickers('launch_setting_change')
+    refreshData('launch_setting_change')
 }
 
 if (companion.launchReasons.peerAppLaunched) {
     log.debug('Started due to peer app launching')
-    fetchAllTickers('launch_app')
+    refreshData('launch_app')
 }
 
 const processFiles = async () => {
@@ -142,13 +222,13 @@ const processFiles = async () => {
         if (file.name.startsWith(FILE_REQUEST_REFRESH)) {
             await file.cbor()
             console.log(`CryptoFace: File ${file.name} is being processed.`)
-            fetchAllTickers('refresh_button')
+            refreshData('refresh_button')
         } else {
             ga.processFileTransfer(file)
 
             // Attempt to fetch ticker we get an GA event from app, most likely either display_on or load events
             if (file.name.startsWith(FILE_EVENT)) {
-                fetchAllTickers('app_event')
+                refreshData('app_event')
             }
         }
     }

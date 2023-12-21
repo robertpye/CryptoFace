@@ -22,7 +22,14 @@
       <rect id="refresh-rect" pointer-events="visible" />
       <text id="refresh-text" pointer-events="visible">Refresh</text>
     </section>
-    
+
+    <section id="gf-index-section">
+      <text id="gf-label">Fear Indices</text>
+      <text id="gf-stock-label">Stocks</text>
+      <text id="gf-crypto-label">Crypto</text>
+      <text id="gf-stock-value"></text>
+      <text id="gf-crypto-value"></text>
+    </section>
 
 
     <section id="data">      

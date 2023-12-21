@@ -11,6 +11,7 @@ import * as clock from './clock'
 import * as hrm from './hrm'
 import { inbox } from 'file-transfer'
 import * as fs from 'fs'
+import { FEAR, GREED, NEUTRAL, SETTING_SHOW_REFRESH_BUTTON } from '../common/constants'
 
 ga.setDebug(false)
 ga.sendLoadAndDisplayOnEvents(true)
@@ -32,6 +33,7 @@ ga.sendLoadAndDisplayOnEvents(true)
 
 const RED = '#E94F64'
 const GREEN = '#52D273'
+const WHITE = '#FBFBFB'
 
 const background = document.getElementById('background')
 const txtTime = document.getElementById('time')
@@ -58,9 +60,17 @@ const tickerName6 = document.getElementById('ticker-name6')
 const tickerPrice6 = document.getElementById('ticker-price6')
 const tickerChange6 = document.getElementById('ticker-change6')
 const lastUpdate = document.getElementById('last-update')
-
+const refreshRect = document.getElementById('refresh-rect')
+const refreshText = document.getElementById('refresh-text')
+const gfMainLabel = document.getElementById('gf-label')
+const gfStockLabel = document.getElementById('gf-stock-label')
+const gfCryptoLabel = document.getElementById('gf-crypto-label')
+const gfStockValue = document.getElementById('gf-stock-value')
+const gfCryptoValue = document.getElementById('gf-crypto-value')
 
 tickerName1.text = 'Loading'
+showRefreshButtonOrFearAndGreedIndices(false)
+
 // tickerName1.text = "BTC"
 // tickerPrice1.text = "30232.24"
 // tickerChange1.text = "32%"
@@ -110,7 +120,7 @@ const processFiles = () => {
     while ((file = inbox.nextFile(FILE_TICKER_DATA))) {
         const payload = fs.readFileSync(file, 'cbor')
         console.log(`CryptoFace: File ${file} is being processed.`)
-        updateUIFromTickerData(payload)
+        updateUI(payload)
     }
 }
 
@@ -136,7 +146,7 @@ function setChangePercent(element, changePercent) {
     }
 }
 
-function updateUIFromTickerData(data) {
+function updateUI(data) {
     if (!data) {
         return
     }
@@ -146,35 +156,105 @@ function updateUIFromTickerData(data) {
     lastUpdatedTimestamp = timestamp
     updateLastUpdateNode(timestamp)
 
-    if (data[0]) {
-        tickerName1.text = data[0].ticker
-        setPrice(tickerPrice1, data[0].price)
-        setChangePercent(tickerChange1, data[0].changePercent)
+    const { tickerData, greedAndFearData, settings } = data
+
+    if (tickerData) {
+        if (tickerData[0]) {
+            tickerName1.text = tickerData[0].ticker
+            setPrice(tickerPrice1, tickerData[0].price)
+            setChangePercent(tickerChange1, tickerData[0].changePercent)
+        }
+        if (tickerData[1]) {
+            tickerName2.text = tickerData[1].ticker
+            setPrice(tickerPrice2, tickerData[1].price)
+            setChangePercent(tickerChange2, tickerData[1].changePercent)
+        }
+        if (tickerData[2]) {
+            tickerName3.text = tickerData[2].ticker
+            setPrice(tickerPrice3, tickerData[2].price)
+            setChangePercent(tickerChange3, tickerData[2].changePercent)
+        }
+        if (tickerData[3]) {
+            tickerName4.text = tickerData[3].ticker
+            setPrice(tickerPrice4, tickerData[3].price)
+            setChangePercent(tickerChange4, tickerData[3].changePercent)
+        }
+        if (tickerData[4]) {
+            tickerName5.text = tickerData[4].ticker
+            setPrice(tickerPrice5, tickerData[4].price)
+            setChangePercent(tickerChange5, tickerData[4].changePercent)
+        }
+        if (tickerData[5]) {
+            tickerName6.text = tickerData[5].ticker
+            setPrice(tickerPrice6, tickerData[5].price)
+            setChangePercent(tickerChange6, tickerData[5].changePercent)
+        }
     }
-    if (data[1]) {
-        tickerName2.text = data[1].ticker
-        setPrice(tickerPrice2, data[1].price)
-        setChangePercent(tickerChange2, data[1].changePercent)
+
+    const showRefreshButton = settings[SETTING_SHOW_REFRESH_BUTTON]
+    showRefreshButtonOrFearAndGreedIndices(showRefreshButton)
+    if (!showRefreshButton) {
+        updateFearGreedIndicesUI(greedAndFearData)
     }
-    if (data[2]) {
-        tickerName3.text = data[2].ticker
-        setPrice(tickerPrice3, data[2].price)
-        setChangePercent(tickerChange3, data[2].changePercent)
+}
+
+/**
+ * @param data ex: {
+ *   stocks: { score: 72, classification: 'greed' },
+ *   crypto: { score: 70, classification: 'greed' }
+ * }
+ */
+function updateFearGreedIndicesUI(data) {
+    const payload = data || {}
+    const { stocks, crypto } = payload
+
+    if (stocks && typeof stocks.score === 'number') {
+        gfStockValue.text = stocks.score
+    } else {
+        gfStockValue.text = '--'
     }
-    if (data[3]) {
-        tickerName4.text = data[3].ticker
-        setPrice(tickerPrice4, data[3].price)
-        setChangePercent(tickerChange4, data[3].changePercent)
+
+    if (crypto && typeof crypto.score === 'number') {
+        gfCryptoValue.text = crypto.score
+    } else {
+        gfCryptoValue.text = '--'
     }
-    if (data[4]) {
-        tickerName5.text = data[4].ticker
-        setPrice(tickerPrice5, data[4].price)
-        setChangePercent(tickerChange5, data[4].changePercent)
+
+    applyFearGreedIndexColor(gfStockValue, stocks.classification)
+    applyFearGreedIndexColor(gfCryptoValue, crypto.classification)
+}
+
+function applyFearGreedIndexColor(node, classification) {
+    switch (classification) {
+        case FEAR:
+            node.style.fill = RED
+            break
+        case GREED:
+            node.style.fill = GREEN
+            break
+        default:
+            node.style.fill = WHITE
+            break
     }
-    if (data[5]) {
-        tickerName6.text = data[5].ticker
-        setPrice(tickerPrice6, data[5].price)
-        setChangePercent(tickerChange6, data[5].changePercent)
+}
+
+function showRefreshButtonOrFearAndGreedIndices(showRefreshButton) {
+    if (showRefreshButton) {
+        refreshRect.style.display = 'inline'
+        refreshText.style.display = 'inline'
+        gfMainLabel.style.display = 'none'
+        gfStockLabel.style.display = 'none'
+        gfCryptoLabel.style.display = 'none'
+        gfStockValue.style.display = 'none'
+        gfCryptoValue.style.display = 'none'
+    } else {
+        refreshRect.style.display = 'none'
+        refreshText.style.display = 'none'
+        gfMainLabel.style.display = 'inline'
+        gfStockLabel.style.display = 'inline'
+        gfCryptoLabel.style.display = 'inline'
+        gfStockValue.style.display = 'inline'
+        gfCryptoValue.style.display = 'inline'
     }
 }
 
@@ -185,5 +265,5 @@ function onRefreshClick(evt) {
 }
 
 document.getElementById('refresh-section').addEventListener('click', onRefreshClick)
-document.getElementById('refresh-rect').addEventListener('click', onRefreshClick)
-document.getElementById('refresh-text').addEventListener('click', onRefreshClick)
+refreshRect.addEventListener('click', onRefreshClick)
+refreshText.addEventListener('click', onRefreshClick)

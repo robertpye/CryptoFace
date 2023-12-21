@@ -15,6 +15,57 @@ text {
   fill: #FBFBFB;
 }
 
+#gf-index-section {
+  x: 244;
+  y: 54;
+  width: 58;
+}
+
+#gf-label {
+  x: 6;
+  y: 0;
+  height: 24;
+  font-size: 20;
+  text-anchor: middle;
+  fill: #FBFBFB;
+}
+
+#gf-stock-label {
+  x: 2;
+  y: 20;
+  height: 20;
+  font-size: 14;
+  text-anchor: end;
+  fill: #FBFBFB;
+}
+
+#gf-crypto-label {
+  x: 12;
+  y: 20;
+  height: 20;
+  font-size: 14;
+  text-anchor: start;
+  fill: #FBFBFB;
+}
+
+#gf-stock-value {
+  x: -8;
+  y: 46;
+  height: 24;
+  font-size: 20;
+  text-anchor: end;
+  fill: #FBFBFB;
+}
+
+#gf-crypto-value {
+  x: 42;
+  y: 46;
+  height: 24;
+  font-size: 20;
+  text-anchor: end;
+  fill: #FBFBFB;
+}
+
 #refresh-section {
   x: 200;
   y: 40;

@@ -10,7 +10,7 @@ export function requestRefresh() {
 }
 
 // triggered by companion
-export function sendTickerData(data) {
+export function sendDataToApp(data) {
     // const filename = + (Math.floor(Math.random() * 10000000000000000))
     enqueueFile(FILE_TICKER_DATA, encode(data))
 }

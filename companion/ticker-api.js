@@ -1,5 +1,6 @@
 import { round } from '../common/utils'
 import log from './log'
+import { EXTREME_FEAR, EXTREME_GREED, FEAR, GREED, NEUTRAL } from '../common/constants'
 
 export function fetchTickers(tickers) {
     if (!tickers) {
@@ -44,4 +45,71 @@ export function fetchTickers(tickers) {
 
 
     return Promise.all(tickerRequests)
+}
+
+export function fetchFearAndGreedIndicesApi() {
+    const stocksPromise = fetch(`https://production.dataviz.cnn.io/index/fearandgreed/graphdata`)
+        .then(response => response.json())
+        .then(json => {
+            if (!json.fear_and_greed) {
+                log.error(`stocks fear and greed api error`, json)
+                return null
+            }
+            return {
+                score: Math.round(json.fear_and_greed.score),
+                classification: validateClassification(json.fear_and_greed.rating),
+            }
+        })
+        .catch(e => {
+            log.error('stocks fear and greed api exception caught', e)
+            return null
+        })
+
+    const cryptoPromise = fetch(`https://api.alternative.me/fng/`)
+        .then(response => response.json())
+        .then(json => {
+            if (json.metadata.error) {
+                log.error(`crypto fear and greed api error`, json.metadata.error)
+                return null
+            }
+            const data = json.data[0]
+            if (!data) {
+                log.error(`crypto fear and greed api no data`, json)
+                return null
+            }
+
+            return {
+                score: Math.round(Number.parseInt(data.value)),
+                classification: validateClassification(data.value_classification),
+            }
+        })
+        .catch(e => {
+            log.error('crypto fear and greed api exception caught', e)
+            return null
+        })
+
+    return Promise.all([ stocksPromise, cryptoPromise ])
+        .then(results => {
+            const [ stocks, crypto ] = results
+            return {
+                stocks,
+                crypto,
+            }
+        })
+}
+
+function validateClassification(value) {
+    const lowercase = value.toLowerCase()
+    switch (lowercase) {
+        case FEAR:
+        case EXTREME_FEAR:
+            return FEAR
+
+        case GREED:
+        case EXTREME_GREED:
+            return GREED
+
+        default:
+            return NEUTRAL
+    }
 }

@@ -2,8 +2,17 @@ function mySettings(props) {
     return (
         <Page>
             <Section
+                title="Show Refresh Button or Fear And Greed Indices"
+                description="This swaps between showing the new Fear and Greed Indices feature, and the refresh button.">
+
+                <Toggle
+                    settingsKey="setting-show-refresh"
+                    label="Show Refresh Button"
+                />
+            </Section>
+            <Section
                 title="Crypto/Stock watchface settings"
-                description="These are the tickers to retrieve and show on your watchface. Crypto usually requires a suffix such as '-USD'. Note: Changes may take up to 5 minutes to take effect">
+                description="These are the tickers to retrieve and show on your watchface. Crypto usually requires a suffix such as '-USD'. Note: Changes may take up to 5 minutes to take effect.">
 
                 <TextInput
                     settingsKey="setting-ticker1"
