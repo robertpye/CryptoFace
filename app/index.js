@@ -210,14 +210,10 @@ function updateFearGreedIndicesUI(data) {
 
     if (stocks && typeof stocks.score === 'number') {
         gfStockValue.text = stocks.score
-    } else {
-        gfStockValue.text = '--'
     }
 
     if (crypto && typeof crypto.score === 'number') {
         gfCryptoValue.text = crypto.score
-    } else {
-        gfCryptoValue.text = '--'
     }
 
     applyFearGreedIndexColor(gfStockValue, stocks.classification)

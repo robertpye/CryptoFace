@@ -17,12 +17,12 @@ text {
 
 #gf-index-section {
   x: 244;
-  y: 54;
+  y: 53;
   width: 58;
 }
 
 #gf-label {
-  x: 6;
+  x: 9;
   y: 0;
   height: 24;
   font-size: 20;
@@ -31,37 +31,37 @@ text {
 }
 
 #gf-stock-label {
-  x: 2;
+  x: 4;
   y: 20;
   height: 20;
-  font-size: 14;
+  font-size: 18;
   text-anchor: end;
   fill: #FBFBFB;
 }
 
 #gf-crypto-label {
-  x: 12;
+  x: 14;
   y: 20;
   height: 20;
-  font-size: 14;
+  font-size: 18;
   text-anchor: start;
   fill: #FBFBFB;
 }
 
 #gf-stock-value {
-  x: -8;
-  y: 46;
+  x: -10;
+  y: 48;
   height: 24;
-  font-size: 20;
+  font-size: 24;
   text-anchor: end;
   fill: #FBFBFB;
 }
 
 #gf-crypto-value {
-  x: 42;
-  y: 46;
+  x: 52;
+  y: 48;
   height: 24;
-  font-size: 20;
+  font-size: 24;
   text-anchor: end;
   fill: #FBFBFB;
 }
@@ -179,7 +179,7 @@ text {
 #hrm-section {
 /*   x: 210; */
 /*   y: 50; */
-  x: 110;
+  x: 108;
   y: 78;
 }
 
