@@ -1,4 +1,4 @@
-import { round } from '../common/utils'
+import { round, zeroPadDecimal } from '../common/utils'
 import log from './log'
 import { EXTREME_FEAR, EXTREME_GREED, FEAR, GREED, NEUTRAL } from '../common/constants'
 
@@ -30,7 +30,7 @@ export function fetchTickers(tickers) {
                     const priceChangePercent = (price / meta.previousClose - 1) * 100
                     return {
                         ticker,
-                        price: round(price, 2),
+                        price: zeroPadDecimal(round(price, 2)),
                         // change: round(data.regularMarketChange, 2),
                         changePercent: round(priceChangePercent, 2),
                     }

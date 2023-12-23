@@ -6,6 +6,19 @@ export function zeroPad(i) {
     return i
 }
 
+// Add zero at end of decimals
+export function zeroPadDecimal(i) {
+    const str = i.toString()
+    const decimalIndex = str.indexOf('.')
+    const decimalDiff = str.length - decimalIndex - 1
+    if (decimalIndex < 0) {
+        return str + '.00'
+    } else if (decimalDiff === 1) {
+        return str + '0'
+    }
+    return str
+}
+
 export function round(value, numDecimals = 0) {
     const shift = Math.pow(10, numDecimals)
     return Math.floor(value * shift) / shift
