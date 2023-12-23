@@ -151,43 +151,59 @@ function updateUI(data) {
         return
     }
 
-    // update last updated node
-    const timestamp = +new Date()
-    lastUpdatedTimestamp = timestamp
-    updateLastUpdateNode(timestamp)
-
     const { tickerData, greedAndFearData, settings } = data
 
     if (tickerData) {
-        if (tickerData[0]) {
-            tickerName1.text = tickerData[0].ticker
-            setPrice(tickerPrice1, tickerData[0].price)
-            setChangePercent(tickerChange1, tickerData[0].changePercent)
+        const timestamp = +new Date()
+        const timeSinceLastUpdate = timestamp - lastUpdatedTimestamp
+        const passedErrorTimeThreshold = timeSinceLastUpdate > 600000 // 10 minutes
+
+        // update if atleast one ticker successful, or time threshold passed if failing. We either update all or none.
+        // This prevents issue if network connection is lost but we open watch to update while in subway for example.
+        // We want to show the previous values if they are recent enough instead of replacing minutes old price data with 'error'
+        let shouldUpdate = false
+        for (let i = 0; i < tickerData.length; ++i) {
+            const price = tickerData[i].price
+            if (price || passedErrorTimeThreshold) {
+                shouldUpdate = true
+                break
+            }
         }
-        if (tickerData[1]) {
-            tickerName2.text = tickerData[1].ticker
-            setPrice(tickerPrice2, tickerData[1].price)
-            setChangePercent(tickerChange2, tickerData[1].changePercent)
-        }
-        if (tickerData[2]) {
-            tickerName3.text = tickerData[2].ticker
-            setPrice(tickerPrice3, tickerData[2].price)
-            setChangePercent(tickerChange3, tickerData[2].changePercent)
-        }
-        if (tickerData[3]) {
-            tickerName4.text = tickerData[3].ticker
-            setPrice(tickerPrice4, tickerData[3].price)
-            setChangePercent(tickerChange4, tickerData[3].changePercent)
-        }
-        if (tickerData[4]) {
-            tickerName5.text = tickerData[4].ticker
-            setPrice(tickerPrice5, tickerData[4].price)
-            setChangePercent(tickerChange5, tickerData[4].changePercent)
-        }
-        if (tickerData[5]) {
-            tickerName6.text = tickerData[5].ticker
-            setPrice(tickerPrice6, tickerData[5].price)
-            setChangePercent(tickerChange6, tickerData[5].changePercent)
+
+        if (shouldUpdate) {
+            lastUpdatedTimestamp = timestamp
+            updateLastUpdateNode(timestamp)
+
+            if (tickerData[0]) {
+                tickerName1.text = tickerData[0].ticker
+                setPrice(tickerPrice1, tickerData[0].price)
+                setChangePercent(tickerChange1, tickerData[0].changePercent)
+            }
+            if (tickerData[1]) {
+                tickerName2.text = tickerData[1].ticker
+                setPrice(tickerPrice2, tickerData[1].price)
+                setChangePercent(tickerChange2, tickerData[1].changePercent)
+            }
+            if (tickerData[2]) {
+                tickerName3.text = tickerData[2].ticker
+                setPrice(tickerPrice3, tickerData[2].price)
+                setChangePercent(tickerChange3, tickerData[2].changePercent)
+            }
+            if (tickerData[3]) {
+                tickerName4.text = tickerData[3].ticker
+                setPrice(tickerPrice4, tickerData[3].price)
+                setChangePercent(tickerChange4, tickerData[3].changePercent)
+            }
+            if (tickerData[4]) {
+                tickerName5.text = tickerData[4].ticker
+                setPrice(tickerPrice5, tickerData[4].price)
+                setChangePercent(tickerChange5, tickerData[4].changePercent)
+            }
+            if (tickerData[5]) {
+                tickerName6.text = tickerData[5].ticker
+                setPrice(tickerPrice6, tickerData[5].price)
+                setChangePercent(tickerChange6, tickerData[5].changePercent)
+            }
         }
     }
 
