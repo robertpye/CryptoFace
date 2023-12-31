@@ -8,7 +8,7 @@ export function fetchTickers(tickers) {
     }
 
     const tickerRequests = tickers.map(ticker => {
-        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?includePrePost=false&interval=2m&useYfid=true&range=1d`
+        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?includePrePost=false&interval=1h&useYfid=true&range=24h&crypto24h=true`
         const dashIndex = ticker.indexOf('-') // crypto
         const userInputTicker = dashIndex > -1 ? ticker.substring(0, dashIndex) : ticker
         const errorJson = {
@@ -27,7 +27,7 @@ export function fetchTickers(tickers) {
                     const dashIndex = meta.symbol.indexOf('-') // crypto
                     const ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
                     const price = meta.regularMarketPrice
-                    const priceChangePercent = (price / meta.previousClose - 1) * 100
+                    const priceChangePercent = (price / meta.chartPreviousClose - 1) * 100
                     return {
                         ticker,
                         price: zeroPadDecimal(round(price, 2)),
