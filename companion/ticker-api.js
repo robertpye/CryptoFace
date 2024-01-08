@@ -37,12 +37,14 @@ export function fetchTickers(tickers) {
                         ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
 
                         const baseRounded = round(price, 0)
-                        priceDecimals = Math.min(11 - ticker.length - baseRounded.toString().length, 4)
+                        if (price < 100.0) {
+                            priceDecimals = Math.min(11 - ticker.length - baseRounded.toString().length, 3)
+                        }
                     }
                     if (isCurrency) {
                         const dashIndex = meta.symbol.indexOf('=')
                         ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
-                        priceDecimals = 4
+                        priceDecimals = 3
                     }
 
                     return {
