@@ -161,12 +161,12 @@ text {
 }
 
 .ticker-price {
-  x: 200;
+  x: 205;
   text-anchor: end;
 }
 
 .ticker-change {
-  x: 100%;
+  x: 305;
   text-anchor: end;
 }
 

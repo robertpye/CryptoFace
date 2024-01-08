@@ -24,13 +24,30 @@ export function fetchTickers(tickers) {
                 }
                 const tickerValues = json.chart.result.map(data => {
                     const meta = data.meta
-                    const dashIndex = meta.symbol.indexOf('-') // crypto
-                    const ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
+                    const isCrypto = meta.instrumentType === 'CRYPTOCURRENCY'
+                    const isCurrency = meta.instrumentType === 'CURRENCY'
+                    let ticker = meta.symbol
                     const price = meta.regularMarketPrice
                     const priceChangePercent = (price / meta.chartPreviousClose - 1) * 100
+                    const type = meta.instrumentType
+
+                    let priceDecimals = 2
+                    if (isCrypto) {
+                        const dashIndex = meta.symbol.indexOf('-')
+                        ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
+
+                        const baseRounded = round(price, 0)
+                        priceDecimals = Math.min(11 - ticker.length - baseRounded.toString().length, 4)
+                    }
+                    if (isCurrency) {
+                        const dashIndex = meta.symbol.indexOf('=')
+                        ticker = dashIndex > -1 ? meta.symbol.substring(0, dashIndex) : meta.symbol
+                        priceDecimals = 4
+                    }
+
                     return {
-                        ticker,
-                        price: zeroPadDecimal(round(price, 2)),
+                        ticker: ticker.substring(0, 6),
+                        price: zeroPadDecimal(round(price, priceDecimals)),
                         // change: round(data.regularMarketChange, 2),
                         changePercent: round(priceChangePercent, 2),
                     }
