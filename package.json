@@ -4,7 +4,7 @@
     "@fitbit/sdk-cli": "^1.7.3"
   },
   "fitbit": {
-    "appUUID": "83c43c01-c0f4-4c1b-af6c-e244f4c0c69c",
+    "appUUID": "f95cc140-67ba-4457-8ee1-ae5ecdaff49a",
     "appType": "clockface",
     "appDisplayName": "CryptoFace",
     "iconFile": "resources/icon.png",
