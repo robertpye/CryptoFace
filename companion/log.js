@@ -11,6 +11,10 @@ function log(level, msg, data) {
         console.log(msg, data)
     }
 
+    if (!LOG_APP_ID) {
+        return
+    }
+
     // append useful debugging data
     data = data || {}
     data._version = VERSION
