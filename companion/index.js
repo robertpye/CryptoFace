@@ -9,7 +9,7 @@ import log from './log'
 import { timestamp } from '../common/utils'
 import { me as companion } from 'companion'
 import { device, app } from 'peer'
-import { GA4_MEASUREMENT_ID, GA4_MEASUREMENT_API_SECRET } from '../resources/config'
+import { GA4_MEASUREMENT_ID, GA4_MEASUREMENT_API_SECRET, VERSION } from '../resources/config'
 import { inbox } from 'file-transfer'
 import {
     sendDataToApp,
@@ -29,6 +29,18 @@ ga.configure({
     apiSecret: GA4_MEASUREMENT_API_SECRET,
     autoFileTransferProcessing: false,
     debug: false,
+})
+const deviceInfo = getDeviceInfo()
+deviceInfo.appVersion = VERSION
+ga.setUserProperties({
+    appVersion: VERSION,
+    osName: deviceInfo.osName,
+    osVersion: deviceInfo.osVersion,
+    modelName: deviceInfo.modelName,
+})
+ga.send({
+    name: 'device_info',
+    params: deviceInfo,
 })
 
 function getDeviceInfo() {
