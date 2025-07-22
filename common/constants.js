@@ -1,4 +1,5 @@
 export const SETTING_TICKERS = 'tickers'
+export const SETTING_TICKER_LABELS = 'tickerLabels'
 export const SETTING_SHOW_REFRESH_BUTTON = 'showRefreshButton'
 
 export const EXTREME_GREED = 'extreme greed'

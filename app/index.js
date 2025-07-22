@@ -3,7 +3,6 @@ import ga from 'fitbit-ga4/app'
 import * as util from '../common/utils'
 import {
     requestRefresh,
-    FILE_REQUEST_REFRESH,
     FILE_TICKER_DATA,
 } from '../common/file-messaging'
 
@@ -11,7 +10,7 @@ import * as clock from './clock'
 import * as hrm from './hrm'
 import { inbox } from 'file-transfer'
 import * as fs from 'fs'
-import { FEAR, GREED, NEGATIVE, NEUTRAL, POSITIVE, SETTING_SHOW_REFRESH_BUTTON } from '../common/constants'
+import { FEAR, GREED, NEGATIVE, POSITIVE, SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKER_LABELS } from '../common/constants'
 
 ga.setDebug(false)
 ga.sendLoadAndDisplayOnEvents(true)
@@ -152,6 +151,7 @@ function updateUI(data) {
     }
 
     const { tickerData, greedAndFearData, settings } = data
+    const labelOverrides = settings[SETTING_TICKER_LABELS]
 
     if (tickerData) {
         const timestamp = +new Date()
@@ -175,32 +175,32 @@ function updateUI(data) {
             updateLastUpdateNode(timestamp)
 
             if (tickerData[0]) {
-                tickerName1.text = tickerData[0].ticker
+                tickerName1.text = labelOverrides[0] || tickerData[0].ticker
                 setPrice(tickerPrice1, tickerData[0].price)
                 setChangePercent(tickerChange1, tickerData[0].changePercent, tickerData[0].changeClassification)
             }
             if (tickerData[1]) {
-                tickerName2.text = tickerData[1].ticker
+                tickerName2.text = labelOverrides[1] || tickerData[1].ticker
                 setPrice(tickerPrice2, tickerData[1].price)
                 setChangePercent(tickerChange2, tickerData[1].changePercent, tickerData[1].changeClassification)
             }
             if (tickerData[2]) {
-                tickerName3.text = tickerData[2].ticker
+                tickerName3.text = labelOverrides[2] || tickerData[2].ticker
                 setPrice(tickerPrice3, tickerData[2].price)
                 setChangePercent(tickerChange3, tickerData[2].changePercent, tickerData[2].changeClassification)
             }
             if (tickerData[3]) {
-                tickerName4.text = tickerData[3].ticker
+                tickerName4.text = labelOverrides[3] || tickerData[3].ticker
                 setPrice(tickerPrice4, tickerData[3].price)
                 setChangePercent(tickerChange4, tickerData[3].changePercent, tickerData[3].changeClassification)
             }
             if (tickerData[4]) {
-                tickerName5.text = tickerData[4].ticker
+                tickerName5.text = labelOverrides[4] || tickerData[4].ticker
                 setPrice(tickerPrice5, tickerData[4].price)
                 setChangePercent(tickerChange5, tickerData[4].changePercent, tickerData[4].changeClassification)
             }
             if (tickerData[5]) {
-                tickerName6.text = tickerData[5].ticker
+                tickerName6.text = labelOverrides[5] || tickerData[5].ticker
                 setPrice(tickerPrice6, tickerData[5].price)
                 setChangePercent(tickerChange6, tickerData[5].changePercent, tickerData[5].changeClassification)
             }

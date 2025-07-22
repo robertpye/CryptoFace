@@ -31,6 +31,35 @@ function mySettings(props) {
                     placeholder="VOO"/>
             </Section>
             <Section
+                title="Customize Labels (Optional)"
+                description="Customize the display name for each of your tracked tickers/symbols. Leave empty to default to the original ticker/symbol.">
+
+                <TextInput
+                    settingsKey="setting-tickerlabel1"
+                    label="Set Label #1"
+                    placeholder="Default"/>
+                <TextInput
+                    settingsKey="setting-tickerlabel2"
+                    label="Set Label #2"
+                    placeholder="Default"/>
+                <TextInput
+                    settingsKey="setting-tickerlabel3"
+                    label="Set Label #3"
+                    placeholder="Default"/>
+                <TextInput
+                    settingsKey="setting-tickerlabel4"
+                    label="Set Label #4"
+                    placeholder="Default"/>
+                <TextInput
+                    settingsKey="setting-tickerlabel5"
+                    label="Set Label #5"
+                    placeholder="Default"/>
+                <TextInput
+                    settingsKey="setting-tickerlabel6"
+                    label="Set Label #6"
+                    placeholder="Default"/>
+            </Section>
+            <Section
                 title="Refresh Button or Fear/Greed Indices"
                 description="This swaps between showing the Fear/Greed Indices and the refresh button.">
 

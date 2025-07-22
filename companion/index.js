@@ -15,7 +15,7 @@ import {
     sendDataToApp,
     FILE_REQUEST_REFRESH,
 } from '../common/file-messaging'
-import { DEFAULT_TICKER_1, DEFAULT_TICKER_2, DEFAULT_TICKER_3, DEFAULT_TICKER_4, DEFAULT_TICKER_5, DEFAULT_TICKER_6, SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKERS } from '../common/constants'
+import { DEFAULT_TICKER_1, DEFAULT_TICKER_2, DEFAULT_TICKER_3, DEFAULT_TICKER_4, DEFAULT_TICKER_5, DEFAULT_TICKER_6, SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKER_LABELS, SETTING_TICKERS } from '../common/constants'
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
 let lastGFIndexFetch = 0
@@ -55,6 +55,14 @@ function readSettings() {
             settings.readValue('setting-ticker4') || DEFAULT_TICKER_4,
             settings.readValue('setting-ticker5') || DEFAULT_TICKER_5,
             settings.readValue('setting-ticker6') || DEFAULT_TICKER_6,
+        ],
+        [SETTING_TICKER_LABELS]: [
+            settings.readValue('setting-tickerlabel1'),
+            settings.readValue('setting-tickerlabel2'),
+            settings.readValue('setting-tickerlabel3'),
+            settings.readValue('setting-tickerlabel4'),
+            settings.readValue('setting-tickerlabel5'),
+            settings.readValue('setting-tickerlabel6'),
         ],
         [SETTING_SHOW_REFRESH_BUTTON]: showRefreshButton === true || showRefreshButton === 'true',
     }
