@@ -15,7 +15,7 @@ import {
     sendDataToApp,
     FILE_REQUEST_REFRESH,
 } from '../common/file-messaging'
-import { SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKERS } from '../common/constants'
+import { DEFAULT_TICKER_1, DEFAULT_TICKER_2, DEFAULT_TICKER_3, DEFAULT_TICKER_4, DEFAULT_TICKER_5, DEFAULT_TICKER_6, SETTING_SHOW_REFRESH_BUTTON, SETTING_TICKERS } from '../common/constants'
 
 const DEFAULT_TICKER_FETCH_FREQUENCY = 300001
 let lastGFIndexFetch = 0
@@ -49,12 +49,12 @@ function readSettings() {
     const showRefreshButton = settings.readValue('setting-show-refresh')
     return {
         [SETTING_TICKERS]: [
-            settings.readValue('setting-ticker1') || 'BTC-USD',
-            settings.readValue('setting-ticker2') || 'ETH-USD',
-            settings.readValue('setting-ticker3') || 'AVAX-USD',
-            settings.readValue('setting-ticker4') || 'NFLX',
-            settings.readValue('setting-ticker5') || 'DIA',
-            settings.readValue('setting-ticker6') || 'VOO',
+            settings.readValue('setting-ticker1') || DEFAULT_TICKER_1,
+            settings.readValue('setting-ticker2') || DEFAULT_TICKER_2,
+            settings.readValue('setting-ticker3') || DEFAULT_TICKER_3,
+            settings.readValue('setting-ticker4') || DEFAULT_TICKER_4,
+            settings.readValue('setting-ticker5') || DEFAULT_TICKER_5,
+            settings.readValue('setting-ticker6') || DEFAULT_TICKER_6,
         ],
         [SETTING_SHOW_REFRESH_BUTTON]: showRefreshButton === true || showRefreshButton === 'true',
     }
