@@ -6,3 +6,7 @@ export const GREED = 'greed'
 export const NEUTRAL = 'neutral'
 export const FEAR = 'fear'
 export const EXTREME_FEAR = 'extreme fear'
+
+export const POSITIVE = 'positive'
+export const NEGATIVE = 'negative'
+export const ZERO = 'zero'

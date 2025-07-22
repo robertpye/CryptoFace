@@ -11,7 +11,7 @@ import * as clock from './clock'
 import * as hrm from './hrm'
 import { inbox } from 'file-transfer'
 import * as fs from 'fs'
-import { FEAR, GREED, NEUTRAL, SETTING_SHOW_REFRESH_BUTTON } from '../common/constants'
+import { FEAR, GREED, NEGATIVE, NEUTRAL, POSITIVE, SETTING_SHOW_REFRESH_BUTTON } from '../common/constants'
 
 ga.setDebug(false)
 ga.sendLoadAndDisplayOnEvents(true)
@@ -129,18 +129,18 @@ inbox.addEventListener('newfile', processFiles)
 // Process files on startup
 processFiles()
 
-function applyTickerColor(node, changePercent) {
-    node.style.fill = changePercent > 0 ? GREEN : RED
+function applyTickerColor(node, changeClassification) {
+    applyColorByClassification(node, changeClassification)
 }
 
 function setPrice(element, price) {
     element.text = price || 'error'
 }
 
-function setChangePercent(element, changePercent) {
-    if (typeof changePercent === 'number' ) {
-        element.text = `${changePercent}%`
-        applyTickerColor(element, changePercent)
+function setChangePercent(element, changePercent, changeClassification) {
+    if (typeof changePercent === 'string' ) {
+        element.text = changePercent
+        applyTickerColor(element, changeClassification)
     } else {
         element.text = ''
     }
@@ -177,32 +177,32 @@ function updateUI(data) {
             if (tickerData[0]) {
                 tickerName1.text = tickerData[0].ticker
                 setPrice(tickerPrice1, tickerData[0].price)
-                setChangePercent(tickerChange1, tickerData[0].changePercent)
+                setChangePercent(tickerChange1, tickerData[0].changePercent, tickerData[0].changeClassification)
             }
             if (tickerData[1]) {
                 tickerName2.text = tickerData[1].ticker
                 setPrice(tickerPrice2, tickerData[1].price)
-                setChangePercent(tickerChange2, tickerData[1].changePercent)
+                setChangePercent(tickerChange2, tickerData[1].changePercent, tickerData[1].changeClassification)
             }
             if (tickerData[2]) {
                 tickerName3.text = tickerData[2].ticker
                 setPrice(tickerPrice3, tickerData[2].price)
-                setChangePercent(tickerChange3, tickerData[2].changePercent)
+                setChangePercent(tickerChange3, tickerData[2].changePercent, tickerData[2].changeClassification)
             }
             if (tickerData[3]) {
                 tickerName4.text = tickerData[3].ticker
                 setPrice(tickerPrice4, tickerData[3].price)
-                setChangePercent(tickerChange4, tickerData[3].changePercent)
+                setChangePercent(tickerChange4, tickerData[3].changePercent, tickerData[3].changeClassification)
             }
             if (tickerData[4]) {
                 tickerName5.text = tickerData[4].ticker
                 setPrice(tickerPrice5, tickerData[4].price)
-                setChangePercent(tickerChange5, tickerData[4].changePercent)
+                setChangePercent(tickerChange5, tickerData[4].changePercent, tickerData[4].changeClassification)
             }
             if (tickerData[5]) {
                 tickerName6.text = tickerData[5].ticker
                 setPrice(tickerPrice6, tickerData[5].price)
-                setChangePercent(tickerChange6, tickerData[5].changePercent)
+                setChangePercent(tickerChange6, tickerData[5].changePercent, tickerData[5].changeClassification)
             }
         }
     }
@@ -226,20 +226,22 @@ function updateFearGreedIndicesUI(data) {
 
     if (stocks && typeof stocks.score === 'number') {
         gfStockValue.text = stocks.score
-        applyFearGreedIndexColor(gfStockValue, stocks.classification)
+        applyColorByClassification(gfStockValue, stocks.classification)
     }
 
     if (crypto && typeof crypto.score === 'number') {
         gfCryptoValue.text = crypto.score
-        applyFearGreedIndexColor(gfCryptoValue, crypto.classification)
+        applyColorByClassification(gfCryptoValue, crypto.classification)
     }
 }
 
-function applyFearGreedIndexColor(node, classification) {
+function applyColorByClassification(node, classification) {
     switch (classification) {
+        case NEGATIVE:
         case FEAR:
             node.style.fill = RED
             break
+        case POSITIVE:
         case GREED:
             node.style.fill = GREEN
             break

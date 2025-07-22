@@ -1,6 +1,6 @@
 import { round, zeroPadDecimal } from '../common/utils'
 import log from './log'
-import { EXTREME_FEAR, EXTREME_GREED, FEAR, GREED, NEUTRAL } from '../common/constants'
+import { EXTREME_FEAR, EXTREME_GREED, FEAR, GREED, NEGATIVE, NEUTRAL, POSITIVE, ZERO } from '../common/constants'
 
 export function fetchTickers(tickers) {
     if (!tickers) {
@@ -29,7 +29,6 @@ export function fetchTickers(tickers) {
                     let ticker = meta.symbol
                     const price = meta.regularMarketPrice
                     const priceChangePercent = (price / meta.chartPreviousClose - 1) * 100
-                    const type = meta.instrumentType
 
                     let priceDecimals = 2
                     if (isCrypto) {
@@ -47,11 +46,13 @@ export function fetchTickers(tickers) {
                         priceDecimals = 3
                     }
 
+                    let changePercent = round(priceChangePercent, 2)
+
                     return {
                         ticker: ticker.substring(0, 6),
                         price: zeroPadDecimal(round(price, priceDecimals)),
-                        // change: round(data.regularMarketChange, 2),
-                        changePercent: round(priceChangePercent, 2),
+                        changeClassification: changePercent === 0 ? ZERO : changePercent > 0 ? POSITIVE : NEGATIVE,
+                        changePercent: `${zeroPadDecimal(changePercent)}%`,
                     }
                 })
                 return tickerValues[0]
