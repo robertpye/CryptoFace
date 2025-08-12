@@ -19,7 +19,7 @@ export function fetchTickers(tickers) {
             .then(response => response.json())
             .then(json => {
                 if (json.chart.error) {
-                    log.warn(`yfinance error`, json.chart.error) // this could be an error due to user input for tickers so log as debug. This isn't an app error
+                    log.warn(`yfinance error for ticker=${ticker}`, json.chart.error) // this could be an error due to user input for tickers so log as debug. This isn't an app error
                     return errorJson
                 }
                 const tickerValues = json.chart.result.map(data => {

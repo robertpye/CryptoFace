@@ -205,7 +205,12 @@ settings.init((evt) => {
 })
 
 const initialFetch = setInterval(() => {
-    log.info('Device Info', getDeviceInfo())
+    const settings = readSettings()
+    const deviceInfo = getDeviceInfo()
+    deviceInfo.tickers = settings[SETTING_TICKERS]
+    deviceInfo.showRefreshButton = settings[SETTING_SHOW_REFRESH_BUTTON]
+    log.info('Device Info', deviceInfo)
+
     // initial fetching of tickers when watchface is loaded. 3 second delay to give time for app to peer connect to companion
     log.debug('Initial fetch of tickers')
     refreshData('init')
