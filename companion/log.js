@@ -17,6 +17,18 @@ function log(level, msg, data) {
 
     // append useful debugging data
     data = data || {}
+
+    // Check if data is an Error object and transform it so it can be serialized
+    if (data instanceof Error) {
+        data = {
+            exception: {
+                name: logData.name,
+                message: logData.message,
+                stack: logData.stack,
+            }
+        }
+    }
+
     data._version = VERSION
     data._bufferedAmount = messaging.peerSocket.bufferedAmount
     data._socketReadyState = messaging.peerSocket.readyState
