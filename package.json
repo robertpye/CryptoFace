@@ -4,9 +4,9 @@
     "@fitbit/sdk-cli": "^1.7.3"
   },
   "fitbit": {
-    "appUUID": "f95cc140-67ba-4457-8ee1-ae5ecdaff49a",
+    "appUUID": "38aa3c96-1d24-4803-81d6-3e6369e2f1be",
     "appType": "clockface",
-    "appDisplayName": "CryptoFace (Rob)",
+    "appDisplayName": "CryptoFace-Large",
     "appVersion": "1.0.1",
     "iconFile": "resources/icon.png",
     "wipeColor": "",
