@@ -1,28 +1,26 @@
 <svg>
   <rect id="background" />
-  
-<!-- <rect class="debug-fill" /> -->
-<!-- <rect class="divider divider-top" /> -->
 
-  
   <section class="horizontal-pad">
 
     <section id="date-section">
-      <text id="date">MON JAN 01</text>
+      <text id="date">MON AUG 24</text>
+      <!-- BIG time; tick handler will set text -->
       <text id="time">13:37</text>
     </section>
 
+    <!-- HRM moved so it won't overlap the big time -->
     <section id="hrm-section">
-      <use id="hrm-icon" class="" href="#heart-beat" />
-      <text id="hrm-text" class="" />
+      <use id="hrm-icon" href="#heart-beat" />
+      <text id="hrm-text" />
     </section>
 
-<!--     <use id="refresh-button" href="#icon-button" class="small-button plus-button" /> -->
     <section id="refresh-section">
       <rect id="refresh-rect" pointer-events="visible" />
       <text id="refresh-text" pointer-events="visible">Refresh</text>
     </section>
 
+    <!-- Keep these nodes so app/index.js never gets null; CSS parks it off-screen -->
     <section id="gf-index-section">
       <text id="gf-label">Fear Indices</text>
       <text id="gf-stock-label">Stocks</text>
@@ -31,8 +29,8 @@
       <text id="gf-crypto-value"></text>
     </section>
 
-
-    <section id="data">      
+    <!-- Ticker table sits below big time -->
+    <section id="data">
       <section id="data-row1" class="data-row">
         <text id="ticker-name1" class="ticker-name" />
         <text id="ticker-price1" class="ticker-price" />
@@ -63,41 +61,9 @@
         <text id="ticker-price6" class="ticker-price" />
         <text id="ticker-change6" class="ticker-change" />
       </section>
-      
     </section>
 
-<!--     <use id="refreshButton" href="#icon-button" class="medium-button application-fill plus-button" /> -->
-
   </section>
-  
-      <text id="last-update">Last updated one minute ago</text>
 
-  
-<!--   <rect class="divider divider-btm" /> -->
-<!--   <svg class="stats">
-    <use id="iconHRM" href="#heart-beat" />
-    <text id="txtHRM" class="stat-left" />
-    <use id="stats-cycle" href="#cycleview"> -->
-<!--       <use href="#cycleview-item" class="cycle-item">
-        <image href="images/steps.png" class="image" />
-        <text class="stat-right" />
-      </use>
-      <use href="#cycleview-item" class="cycle-item">
-        <image href="images/calories.png" class="image" />
-        <text class="stat-right" />
-      </use> -->
-<!--       <use href="#cycleview-item" class="cycle-item">
-        <image href="images/distance.png" class="image" />
-        <text class="stat-right" />
-      </use> -->
-<!--       <use href="#cycleview-item" class="cycle-item">
-        <image href="images/heart_open.png" class="image" />
-        <text class="stat-right" />
-      </use>
-      <use href="#cycleview-item" class="cycle-item">
-        <image href="images/heart_solid.png" class="image" />
-        <text class="stat-right" />
-      </use> -->
-<!--     </use>
-  </svg> -->
+  <text id="last-update">Last updated recently</text>
 </svg>

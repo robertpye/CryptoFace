@@ -1,204 +1,89 @@
-.background {
-  viewport-fill: black;
-}
-
-.debug-fill {
-  x: 0;
-  y: 0;
-  width: 100%;
-  height: 100%;
-  fill: #787878;
-}
+.background { viewport-fill: black; }
 
 text {
   font-family: SevilleSharp;
   fill: #FBFBFB;
 }
 
-#gf-index-section {
-  x: 244;
-  y: 53;
-  width: 58;
-}
+/* --- Date & Time ---------------------------------------------------- */
+/* Drop the block slightly, center the date, and pull the time closer */
+#date-section { x: 0; y: 34; }                 /* was 40 */
 
-#gf-label {
-  x: 9;
+#date {
+  font-family: Seville;
+  font-size: 26;
+  text-length: 48;
+  x: 50%;                                      /* centered to avoid left clipping */
   y: 0;
-  height: 24;
-  font-size: 20;
   text-anchor: middle;
-  fill: #FBFBFB;
+  fill: #FFFFFF;
 }
 
-#gf-stock-label {
-  x: 4;
-  y: 20;
-  height: 20;
-  font-size: 18;
-  text-anchor: end;
-  fill: #FBFBFB;
-}
-
-#gf-crypto-label {
-  x: 14;
-  y: 20;
-  height: 20;
-  font-size: 18;
-  text-anchor: start;
-  fill: #00C853;
-}
-
-#gf-stock-value {
-  x: -10;
-  y: 48;
-  height: 24;
-  font-size: 24;
-  text-anchor: end;
-  fill: #FBFBFB;
-}
-
-#gf-crypto-value {
-  x: 52;
-  y: 48;
-  height: 24;
-  font-size: 24;
-  text-anchor: end;
-  fill: #FBFBFB;
-}
-
-#refresh-section {
-  x: 200;
-  y: 40;
-  width: 102;
-  height: 64;
-}
-#refresh-section rect {
-  x: 0;
-  y: 0;
-  width: 100%;
-  height: 100%;
-/*   fill: #787878; */
-  fill: #46BCDE;
-}
-#refresh-section text {
-  x: 50%;
-  y: 40;
-  height: 24;
-  font-size: 22;
-  text-anchor: middle;
-  fill: #FBFBFB;
-}
-
-#date-section {
-  y: 30;
-  x: 0;
-}
-
+/* BIG time just under the date (smaller gap) */
 #time {
   font-family: Seville;
-  font-size: 40;
-  text-length: 10;
+  font-size: 76;
+  text-length: 12;
+  x: 0;
   y: 70;
   fill: #FBFBFB;
 }
 
-#date {
-  font-family: Seville;
-  font-size: 30;
-  text-length: 32;
-  y: 30;
-  fill: #FFFFFF;
+/* HRM – move left, aligned just right of time */
+#hrm-section {
+  x: 190;   /* was 252 – brings it closer to time */
+  y: 72;    /* sits on same baseline as time */
 }
+#hrm-icon { x: 1; width: 24; height: 24; fill: #FF214A; }
+#hrm-text { x: 31; y: 22; }
 
-/* Generic, need positioning */
-.divider {
-  width: 222;
+/* --- Fear indices kept but off-screen so JS won't crash ------------- */
+#gf-index-section {
+  x: 480;                                      /* off-screen (Sense/Versa3 ~336px wide) */
+  y: 0;
+  width: 1;
   height: 1;
-  fill: #646464;
 }
 
+/* --- Refresh button ------------------------------------------------- */
+#refresh-section { x: 200; y: 40; width: 102; height: 64; }
+#refresh-section rect { x: 0; y: 0; width: 100%; height: 100%; fill: #46BCDE; }
+#refresh-section text { x: 50%; y: 40; height: 24; font-size: 22; text-anchor: middle; fill: #FBFBFB; }
+
+/* --- Ticker table --------------------------------------------------- */
 #data {
   x: 0;
   width: 100%;
-  y: 50%-50;
-  height: 195;
+  y: 130;    /* was ~170 – moves tickers up under the time */
+  height: 170;
 }
 
-.data-row {
-  x: 0;
-  width: 100%;
-  height: 26;
-}
+.data-row { x: 0; width: 100%; height: 24; }
 
 .data-row text {
   font-family: SevilleSharp;
   font-size: 26;
-  text-length: 16;
+  text-length: 24;
   fill: #FBFBFB;
 }
 
-#data-row1 {
-  y: 0;
-}
-#data-row2 {
-  y: 30;
-}
-#data-row3 {
-  y: 60;
-}
-#data-row4 {
-  y: 90;
-}
-#data-row5 {
-  y: 120;
-}
-#data-row6 {
-  y: 150;
-}
+/* 6 rows @ 26px step = 130px total height */
+#data-row1 { y: 0;   }
+#data-row2 { y: 26;  }
+#data-row3 { y: 52;  }
+#data-row4 { y: 78;  }
+#data-row5 { y: 104; }
+#data-row6 { y: 130; }
 
-.ticker-name {
-  x: 0;
-}
+.ticker-name  { x: 0; }
+.ticker-price { x: 205; text-anchor: end; }
+.ticker-change{ x: 305; text-anchor: end; }
 
-.ticker-price {
-  x: 205;
-  text-anchor: end;
-}
-
-.ticker-change {
-  x: 305;
-  text-anchor: end;
-}
-
-.hrm-symbol-image {
-  width: 24;
-  height: 24;
-/*   y: 15; */
-}
-
-#hrm-section {
-/*   x: 210; */
-/*   y: 50; */
-  x: 108;
-  y: 78;
-}
-
-/* Our reference to entire icon symbol node */
-#hrm-icon {
-  x: 1;
-  fill: #FF214A;
-  width: 24;
-  height: 24;
-}
-
-#hrm-text {
-  x: 31;
-  y: 22;
-}
-
+/* --- Footer --------------------------------------------------------- */
 #last-update {
-  y: 100%-10;
   x: 50%;
+  y: 332;                                      /* clear of row 6 */
   text-anchor: middle;
-  font-size: 18;
+  font-size: 16;
+  text-length: 64;
 }
