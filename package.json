@@ -6,7 +6,8 @@
   "fitbit": {
     "appUUID": "f95cc140-67ba-4457-8ee1-ae5ecdaff49a",
     "appType": "clockface",
-    "appDisplayName": "CryptoFace",
+    "appDisplayName": "CryptoFace (Rob)",
+    "appVersion": "1.0.1",
     "iconFile": "resources/icon.png",
     "wipeColor": "",
     "requestedPermissions": [
